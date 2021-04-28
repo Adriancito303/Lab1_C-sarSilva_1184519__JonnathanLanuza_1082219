@@ -50,7 +50,7 @@ namespace Lab1_CésarSilva_1184519__JonnathanLanuza_1082219
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Players}/{action=Index}/{id?}");
             });
         }
     }

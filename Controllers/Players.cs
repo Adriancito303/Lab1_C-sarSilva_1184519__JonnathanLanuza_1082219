@@ -1,18 +1,28 @@
-﻿    using System.Threading.Tasks;
-using System.Web;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Lab1_CésarSilva_1184519_JonnathanLanuza_1082219.Models.Data;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Web;
+using System.Threading.Tasks;
+using System.IO;
+using System.Threading;
+using Microsoft.AspNetCore.Hosting;
+using Lab1_CésarSilva_1184519_JonnathanLanuza_1082219.Models.Data;
+using Lab1_CésarSilva_1184519_JonnathanLanuza_1082219.Models;
+using Lab1_CésarSilva_1184519__JonnathanLanuza_1082219.Models.ViewModels;
+
 
 namespace Lab1_CésarSilva_1184519_JonnathanLanuza_1082219.Controllers
 {
     public class Players : Controller
     {
         List<string> plyers = new List<string>();
+        private readonly IWebHostEnvironment hostingEnvironment;
+        public Players(IWebHostEnvironment hostEnvironment)
+        {
+            hostingEnvironment = hostEnvironment;
+        }
         // GET: Players
         public ActionResult Index()
         {
@@ -24,14 +34,22 @@ namespace Lab1_CésarSilva_1184519_JonnathanLanuza_1082219.Controllers
         {
             return View();
         }
+        public ActionResult FileUpload()
+        {
+            return View();
+        }
 
         // GET: Players/Create
         public ActionResult Create()
         {
             return View();
         }
+        public ActionResult Search()
+        {
+            return View(Singleton.Playrs.ListPlayers);
+        }
         [HttpPost]
-        public ActionResult Index(string Name, string LastName, string Position, string Club, int Salary)
+        public ActionResult Search(string Name, string LastName, string Position, string Club, int Salary)
         {
             ViewData["SearchName"] = Name;
             ViewData["SearchLastName"] = LastName;
@@ -104,21 +122,56 @@ namespace Lab1_CésarSilva_1184519_JonnathanLanuza_1082219.Controllers
         // POST: Players/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(MLSModelView model)
         {
             try
             {
-                var newplayerlist = new Models.MLSplayers
+                if (ModelState.IsValid)
                 {
-                    Club = collection["Club"],
-                    Name = collection["Name"],
-                    LastName = collection["LastName"],
-                    Position = collection["Position"],
-                    Salary = Convert.ToInt32(collection["Salary"])
-                };
-                plyers.Add(newplayerlist.ToString());
-                Singleton.Playrs.ListPlayers.Add(newplayerlist);
-                return RedirectToAction(nameof(Index));
+                    string uniquefilename = null;
+                    if (model.SelectList != null)
+                    {
+                        //Subir archivo
+                        string uploadsfolder = Path.Combine(hostingEnvironment.WebRootPath, "Uploads");
+                        uniquefilename = Guid.NewGuid().ToString() + "_" + model.SelectList.FileName;
+                        string filepath = Path.Combine(uploadsfolder, uniquefilename);
+                        model.SelectList.CopyTo(new FileStream(filepath, FileMode.Create));
+                        //Leer archivo
+                        StreamReader lector = new StreamReader("filepath");
+                        //interpretar linea para leer info de medicina
+                        string read = lector.ReadLine();
+                        int cont = 0;
+                        //insertar en la lista de medicinas
+                        while (!lector.EndOfStream)
+                        {
+                            string leer = lector.ReadLine();
+                            for (int i = 0; i < 6; i++)
+                            {
+                                if (read[i] == ',')
+                                {
+                                    if (read[i + 1] != ',')
+                                    {
+
+                                        //LECTURA.lmed(leer);
+                                    }
+                                    else
+                                    {
+
+                                        //LECTURA.lmed(leer);
+                                    }
+                                    cont++;
+                                }
+                            }
+
+                            //insertar en el indice de busqueda Binaria
+                            //BinaryTree.Add(Singleton.Instance.MClientsList);
+                        }
+
+                    };
+
+                    return RedirectToAction("Index");
+                }
+                return View();
             }
             catch
             {
