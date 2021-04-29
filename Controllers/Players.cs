@@ -214,6 +214,9 @@ namespace Lab1_CésarSilva_1184519_JonnathanLanuza_1082219.Controllers
                 var Player = new Models.MLSplayers
                 {
                     Club = collection["Club"],
+                    Name = collection["Name"],
+                    LastName = collection["LastName"],
+                    Position = collection["Position"],
                     Salary = Convert.ToInt32(collection["Salary"])
                 };
                 return RedirectToAction(nameof(Index));
