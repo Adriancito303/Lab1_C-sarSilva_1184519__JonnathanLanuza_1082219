@@ -44,6 +44,24 @@ namespace Lab1_CésarSilva_1184519_JonnathanLanuza_1082219.Controllers
         {
             return View();
         }
+        public ActionResult CreatePlayers()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult CreatePlayers(IFormCollection Dplayers)
+        {
+            var Player = new Models.MLSplayers
+            {
+                Club = Dplayers["Club"],
+                Name = Dplayers["Name"],
+                LastName = Dplayers["LastName"],
+                Position = Dplayers["Position"],
+                Salary = Convert.ToInt32(Dplayers["Salary"])
+            };
+            Singleton.Playrs.ListPlayers.Add(Player);
+            return RedirectToAction(nameof(Index));
+        }
         public ActionResult Search()
         {
             return View(Singleton.Playrs.ListPlayers);
@@ -180,27 +198,6 @@ namespace Lab1_CésarSilva_1184519_JonnathanLanuza_1082219.Controllers
         }
 
         // GET: CPlayers/Edit/5
-        public ActionResult Edit(int Salary)
-        {
-            return View();
-        }
-
-        // POST: CPlayers/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int Salary, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: CPlayers/Edit/5
         public ActionResult Edit(string Club)
         {
             var editp = Singleton.Playrs.ListPlayers.Find(x => x.Club == Club);
@@ -214,6 +211,11 @@ namespace Lab1_CésarSilva_1184519_JonnathanLanuza_1082219.Controllers
         {
             try
             {
+                var Player = new Models.MLSplayers
+                {
+                    Club = collection["Club"],
+                    Salary = Convert.ToInt32(collection["Salary"])
+                };
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -234,7 +236,8 @@ namespace Lab1_CésarSilva_1184519_JonnathanLanuza_1082219.Controllers
         public ActionResult Delete(string Name, IFormCollection collection)
         {
             try
-            {
+            { 
+                Singleton.Playrs.ListPlayers.Clear();
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -244,33 +247,3 @@ namespace Lab1_CésarSilva_1184519_JonnathanLanuza_1082219.Controllers
         }
     }
 }
-//Lectura CSV
-
-//[HttpPost]
-//public ActionResult Index(HttPostedFileBase postedFile)
-//{
-//    string Lpath = string.Empty;
-//    if(postedFile != null)
-//    {
-//        string path = Server.MapPath("~/Uploads/");
-//        if (!Directory.Exists(path))
-//        {
-//            Directory.CreateDirectory(path);
-//        }
-//        filePath = path + Phat.GetFileName(postedFile.FileName);
-//        string extencions = Path.GetExtension(postedFile.FileName);
-//        postedFile.SaveAs(filePath);
-
-//        string csvData = File.ReadAllText(filePath);
-//        foreach (String row in  csvData.Split('\n'))
-//        {
-//            if (!string.IsNullOrEmpty(row))
-//            {
-//                plyers.Add(new string { Club = row.Split(',')[0]),
-//                    Name = row.Split(',')[1]),
-//                    });
-//            }
-//        }
-//    }
-//    return View();
-//}
